@@ -62,10 +62,11 @@ bool8	isfull(struct queue *q)
  * Insert a process at the tail of a queue
  * @param pid	ID process to insert
  * @param q	Pointer to the queue to use
+ * @param key priority of process
  *
  * @return pid on success, SYSERR otherwise
  */
-pid32 enqueue(pid32 pid, struct queue *q)
+pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 {
 	if (isfull(q) || isbadpid(pid)) {
 		return SYSERR;

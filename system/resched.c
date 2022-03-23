@@ -25,7 +25,7 @@ void	resched(void)		// assumes interrupts are disabled
         if (ptold->prstate == PR_CURR) {
                 // Old process got preempted; place back on ready queue
                 ptold->prstate = PR_READY;
-                enqueue(currpid, readyqueue);
+                enqueue(currpid, readyqueue, ptold->prprio);
         }
 
         // Force context switch to next ready process
