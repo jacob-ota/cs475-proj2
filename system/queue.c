@@ -79,21 +79,45 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 	newEntry->pid = pid;
 	newEntry->prev = q->tail;
 	newEntry->next = NULL;
-
-	//TODO - insert into tail of queue
-
-	//link the new entry to the last queue entry
-	struct qentry *tailEntry = q->tail;
-	if (tailEntry != NULL)
-		tailEntry->next = newEntry;
-
+	newEntry->key = key; 
+	
+	//link the new entry to correct spot in queue
+	struct qentry *position = q->tail;
+	struct qentry *headPos = q->head;
+	
+	//check if it should go at the head of the queue
+	if(headPos->key < newEntry->key) {
+		newEntry->next = headPos;
+		newEntry->prev = headPos->prev;
+		headPos = newEntry->next;
+	}
+	//check for head spot if it should go after the head
+	else if(headPos->key >= newEntry->key) {
+		newEntry->next = headPos->next;
+		newEntry->prev = headPos;
+		headPos->next = newEntry;
+	}
+	//check every spot starting at the end going back up
+	else {
+		while(position->prev != NULL) {
+			if(position->key >= newEntry->key) {
+				newEntry->next = position->next;
+				newEntry->prev = position;
+				position->next = newEntry;
+				break;
+			}
+			else {
+				position = position->prev;
+			}
+		}
+	}
 	//update Queue tail to point to  new entry
-	q->tail = newEntry;
 
 	//update Queue head if needed
-	if (q->head == NULL)
+	if (q->head == NULL) {
+		kprintf("New Head\n");
 		q->head = newEntry;
-
+	}
 	//update queue size
 	q->size++;
 
