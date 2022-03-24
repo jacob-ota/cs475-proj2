@@ -82,20 +82,21 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 	newEntry->key = key; 
 	
 	//link the new entry to correct spot in queue
-	struct qentry *position = q->tail;
-	struct qentry *headPos = q->head;
-	
+	struct qentry *position = q->tail->prev;
 	//check if it should go at the head of the queue
-	if(headPos->key < newEntry->key) {
-		newEntry->next = headPos;
-		newEntry->prev = headPos->prev;
-		headPos = newEntry->next;
+	if(q->head->key < newEntry->key) {
+		newEntry->next = q->head;
+		newEntry->prev = NULL;
+		q->head = newEntry;
+	}
+	else if(q->head->key >= newEntry->key){
+		newEntry->next = q->head->next;
+		newEntry->prev = q->head;
+		q->head->next = newEntry;
 	}
 	//check for head spot if it should go after the head
-	else if(headPos->key >= newEntry->key) {
-		newEntry->next = headPos->next;
-		newEntry->prev = headPos;
-		headPos->next = newEntry;
+	else if(q->tail->key >= newEntry->key) {
+		q->tail = newEntry;
 	}
 	//check every spot starting at the end going back up
 	else {
@@ -108,19 +109,23 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 			}
 			else {
 				position = position->prev;
+				// if(position->prev == NULL) {
+				// 	if(position->key >= newEntry->key){
+				// 		newEntry->next = position->next;
+				// 		newEntry->prev = position;
+				// 		position->next = newEntry;
+				// 	}
+				// }
 			}
 		}
 	}
 	//update Queue tail to point to  new entry
-
 	//update Queue head if needed
-	if (q->head == NULL) {
-		kprintf("New Head\n");
+	if(q->head == NULL) {
 		q->head = newEntry;
 	}
 	//update queue size
 	q->size++;
-
 	return pid;
 }
 

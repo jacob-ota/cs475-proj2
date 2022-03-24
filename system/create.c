@@ -42,6 +42,7 @@ pid32	create(void *procaddr, uint32 ssize, pri16 priority, char *name, uint32 na
 	prptr->prstkbase = (char *)saddr;
 	prptr->prstklen = ssize;
 	prptr->prname[PNMLEN-1] = NULLCH;
+	prptr->prprio = priority;
 	for (i=0 ; i<PNMLEN-1 && (prptr->prname[i]=name[i])!=NULLCH; i++)
 		;
 	prptr->prsem = -1;
