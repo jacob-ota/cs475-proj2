@@ -24,13 +24,14 @@ status	ready(pid32 pid, bool8 resch)
 	prptr->prstate = PR_READY;	//DC REMOVE
 
 	// TODO - enqueue the process
-	if (AGING != FALSE){ 
-		struct qentry *temp = readyqueue->head;
-		while(temp != NULL){
-			temp->key++;
-			temp = temp->next;
-		}
-	}
+	//if (AGING != FALSE){ 
+		// struct qentry *temp = readyqueue->head;
+		// while(temp != NULL){
+		// 	kprintf("incrementing key in ready\n");
+		// 	temp->key++;
+		// 	temp = temp->next;
+		// }
+	//}
 	enqueue(pid, readyqueue, prptr->prprio); //DC REMOVE
 
 	if (resch == RESCHED_YES)
