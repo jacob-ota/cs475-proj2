@@ -34,16 +34,15 @@ void	resched(void)		// assumes interrupts are disabled
         ptnew->prstate = PR_CURR;
 // DC REMOVE END 
 
-				//if (AGING != FALSE){ 
-					struct qentry *temp = readyqueue->head;
-					while(temp != NULL){
-						kprintf("incrementing key in resch\n");
-						temp->key++;
-						temp = temp->next;
-					}
-					kprintf("OUT OF LOOP");
-				//}
-
+	/* if (AGING != FALSE){ 
+		struct qentry *temp = readyqueue->head;
+		while(temp != NULL){
+			//kprintf("incrementing key in resch\n");
+			temp->key++;
+			temp = temp->next;
+		}
+		//kprintf("OUT OF LOOP");
+	} */
 	// TODO - check ptold's state. If it's running, put it on the ready queue and change state to ready
 
 	// TODO - dequeue next process off the ready queue and point ptnew to it

@@ -42,7 +42,6 @@ typedef	int32	status;		/* returned status value (OK/SYSERR)	*/
 
 #define FALSE	0		/* Boolean False			*/
 #define TRUE	1		/* Boolean True				*/
-#define AGING   1
 
 /* Null pointer, character, and string definintions */
 
@@ -73,4 +72,5 @@ syscall	kputc(byte);
 syscall	kgetc(void);
 
 /* global list of ready processes*/
+bool8 AGING;
 extern	struct queue	*readyqueue;

@@ -68,7 +68,7 @@ bool8	isfull(struct queue *q)
  */
 pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 {
-	/* if (isfull(q))
+	if (isfull(q))
   	{
     	return SYSERR;
   	}
@@ -108,10 +108,17 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
   	if (NULL == currEntry) // new tail
     	q->tail = newEntry;
   	q->size++; // increment size
-
-  	return OK; */
-
-	if (isfull(q) || isbadpid(pid)) {
+	if (AGING != FALSE){ 
+		struct qentry *temp = readyqueue->head;
+		while(temp != NULL){
+			//kprintf("incrementing key in resch\n");
+			temp->key++;
+			temp = temp->next;
+		}
+	}	//kprintf("OUT OF LOOP");
+  	return OK; 
+ 
+	/* if (isfull(q) || isbadpid(pid)) {
 		return SYSERR;
 	}
 
@@ -149,7 +156,7 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 		curr->next->prev = newEntry;
 		newEntry->next = curr->next;
 		curr->next = newEntry;
-	}
+	} */
 	
 	
 	//check if it should go at the head of the queue
@@ -194,8 +201,8 @@ pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 		q->head = newEntry;
 	} */
 	//update queue size
-	q->size++;
-	return pid; 
+	// q->size++;
+	// return pid; 
 }
 
 /**
