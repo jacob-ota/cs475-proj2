@@ -68,64 +68,59 @@ bool8	isfull(struct queue *q)
  */
 pid32 enqueue(pid32 pid, struct queue *q, int32 key)
 {
-	if (isfull(q) || isbadpid(pid)) {
-		return SYSERR;
-	}
+	if (isfull(q))
+  	{
+    	return SYSERR;
+  	}
 
-	//TODO - allocate space on heap for a new qentry
-	struct qentry *newEntry = (struct qentry*) malloc(sizeof(struct qentry));
-
-	//TODO - initialize the new QEntry
-	newEntry->pid = pid;
-	newEntry->prev = q->tail;
+  	// create a new entry and set the next and prev to NULL
+  	struct qentry *newEntry = (struct qentry *)malloc(sizeof(struct qentry));
+  	newEntry->pid = pid;
+  	newEntry->key = key;
 	newEntry->next = NULL;
-	newEntry->key = key; 
-	
-	//link the new entry to correct spot in queue
-	struct qentry *position = q->tail->prev;
-	//check if it should go at the head of the queue
-	if(q->head->key < newEntry->key) {
-		newEntry->next = q->head;
-		newEntry->prev = NULL;
-		q->head = newEntry;
+  	newEntry->prev = NULL;
+
+  	// get positions for the current and the one befor the current
+  	struct qentry *position; 
+  	struct qentry *prevPos; 
+	//check every spot starting at the head and going to tail
+	position = q->head;
+	//find the position in fifo order, if it isn't in te head look through the queue
+	while(position != NULL && position->key >= key) {
+		position = position->next;
 	}
-	else if(q->head->key >= newEntry->key){
-		newEntry->next = q->head->next;
-		newEntry->prev = q->head;
-		q->head->next = newEntry;
+	//if the position is the tail make the new entry the tail
+	if(position != NULL) {
+		prevPos = position->prev;
+		newEntry->prev = prevPos;
+  		newEntry->next = position;
 	}
-	//check for head spot if it should go after the head
-	else if(q->tail->key >= newEntry->key) {
+	//make the previous position the old tail and make the tail the new entry
+	else {
+		prevPos = q->tail;
+		newEntry->prev = prevPos;
 		q->tail = newEntry;
 	}
-	//check every spot starting at the end going back up
-	else {
-		while(position->prev != NULL) {
-			if(position->key >= newEntry->key) {
-				newEntry->next = position->next;
-				newEntry->prev = position;
-				position->next = newEntry;
-				break;
-			}
-			else {
-				position = position->prev;
-				// if(position->prev == NULL) {
-				// 	if(position->key >= newEntry->key){
-				// 		newEntry->next = position->next;
-				// 		newEntry->prev = position;
-				// 		position->next = newEntry;
-				// 	}
-				// }
-			}
-		}
+	//if the while loop never runs it is at the head so make the newEntry the new head
+	if (prevPos == NULL) {
+    	q->head = newEntry;
 	}
-	//update Queue tail to point to  new entry
-	//update Queue head if needed
-	if(q->head == NULL) {
-		q->head = newEntry;
+	if(prevPos != NULL) {
+		prevPos->next = newEntry;
+	}
+	if(position != NULL) {
+		position->prev = newEntry;
 	}
 	//update queue size
 	q->size++;
+
+	if (AGING != FALSE){ 
+		struct qentry *temp = readyqueue->head;
+		while(temp != NULL){
+			temp->key++;
+			temp = temp->next;
+		}
+	}
 	return pid;
 }
 

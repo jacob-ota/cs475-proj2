@@ -73,3 +73,7 @@ syscall	kgetc(void);
 
 /* global list of ready processes*/
 extern	struct queue	*readyqueue;
+
+/* define the aging */
+
+bool8 AGING;

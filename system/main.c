@@ -33,6 +33,7 @@ int	main(uint32 argc, uint32 *argv)
 
 	kprintf("Hello XINU WORLD!\r\n");
 
+	AGING = TRUE;
 	//priority of process is input as the 3rd argument of create()
 	ready(create((void*) printpid, INITSTK, 1, "PRINTER-1", 2, 1, args1++), FALSE);
 	ready(create((void*) printpid, INITSTK, 5, "PRINTER-B", 2, 1, args1++), FALSE);
